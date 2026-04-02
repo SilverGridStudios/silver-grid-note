@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore, Note, NoteColor, NoteType, ChecklistItem } from '@/lib/store';
-import { Check, MoreVertical, Undo, Redo, Bell, Send, Lock, Trash2, Plus, Archive, ArrowLeft, CheckSquare, Search, Printer, Mail, MessageCircle, Twitter, Copy, Share2 } from 'lucide-react';
+import { Check, MoreVertical, Undo, Redo, Bell, Send, Lock, Trash2, Plus, Archive, ArrowLeft, CheckSquare, Search, Printer, Mail, MessageCircle, Twitter, Copy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 
@@ -128,8 +128,8 @@ export function NoteEditor({ noteId, initialType = 'text' }: NoteEditorProps) {
   return (
     <div className={cn("flex flex-col h-[100dvh]", colorMap[color])}>
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-1 h-14 bg-black/5">
-        <button onClick={handleSave} className="p-2 hover:bg-black/10 rounded-full transition-colors shrink-0">
+      <div className="flex items-center justify-between px-2 h-14 bg-black/5">
+        <button onClick={handleSave} className="p-2 hover:bg-black/10 rounded-full transition-colors">
           <Check className="w-6 h-6" />
         </button>
         <input 
@@ -137,15 +137,9 @@ export function NoteEditor({ noteId, initialType = 'text' }: NoteEditorProps) {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Title"
-          className="flex-1 min-w-0 bg-transparent border-none outline-none px-2 text-lg font-medium placeholder-black/40"
+          className="flex-1 bg-transparent border-none outline-none px-2 text-lg font-medium placeholder-black/40"
         />
-        <div className="flex items-center shrink-0">
-          <button onClick={handleShare} className="p-2 hover:bg-black/10 rounded-full transition-colors">
-            <Share2 className="w-5 h-5" />
-          </button>
-          <button onClick={handleDelete} className="p-2 hover:bg-black/10 rounded-full transition-colors">
-            <Trash2 className="w-5 h-5" />
-          </button>
+        <div className="flex items-center">
           <button 
             onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
             className="p-2 hover:bg-black/10 rounded-full transition-colors relative"

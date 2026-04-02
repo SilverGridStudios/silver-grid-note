@@ -1,16 +1,70 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Folder, Smile, CheckCircle2, Sparkles, Bold, Italic, Underline, Strikethrough, Link as LinkIcon, Heading1, Heading2, Edit3 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import Script from 'next/script';
 
 export default function PremiumPage() {
   const router = useRouter();
   const [plan, setPlan] = useState<'yearly' | 'monthly'>('yearly');
+  const [isIndia, setIsIndia] = useState(true);
+
+  useEffect(() => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setIsIndia(tz === 'Asia/Calcutta' || tz === 'Asia/Kolkata');
+  }, []);
+
+  const pricing = {
+    IN: {
+      yearly: { price: '₹1,500.00', original: '₹2,400.00', amount: 150000 },
+      monthly: { price: '₹200.00', amount: 20000 }
+    },
+    US: {
+      yearly: { price: '$18.00', original: '$30.00', amount: 1800 },
+      monthly: { price: '$2.50', amount: 250 }
+    }
+  };
+
+  const currentPricing = isIndia ? pricing.IN : pricing.US;
+
+  const handleSubscribe = () => {
+    if (isIndia) {
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_dummy',
+        amount: currentPricing[plan].amount,
+        currency: 'INR',
+        name: 'Silver Grid Note',
+        description: `Premium ${plan} subscription`,
+        handler: function (response: any) {
+          alert('Payment successful! ID: ' + response.razorpay_payment_id);
+        },
+        theme: { color: '#0d9488' }
+      };
+      const rzp = new (window as any).Razorpay(options);
+      rzp.open();
+    } else {
+      const url = plan === 'yearly'
+        ? process.env.NEXT_PUBLIC_LS_YEARLY_URL || 'https://demo.lemonsqueezy.com/checkout/buy/yearly'
+        : process.env.NEXT_PUBLIC_LS_MONTHLY_URL || 'https://demo.lemonsqueezy.com/checkout/buy/monthly';
+
+      if ((window as any).LemonSqueezy) {
+        (window as any).LemonSqueezy.Url.Open(url);
+      } else {
+        window.open(url, '_blank');
+      }
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-gray-100 h-[100dvh] overflow-y-auto">
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
+      <Script src="https://assets.lemonsqueezy.com/lemon.js" strategy="lazyOnload" onLoad={() => {
+        if ((window as any).createLemonSqueezy) {
+          (window as any).createLemonSqueezy();
+        }
+      }} />
       {/* Header */}
       <div className="flex items-center gap-2 px-2 h-14 bg-gray-100 shadow-sm z-10 sticky top-0">
         <button 
@@ -36,8 +90,8 @@ export default function PremiumPage() {
               <span className="text-xl text-gray-800">Yearly</span>
             </div>
             <div className="flex flex-col items-end">
-              <span className="text-gray-400 line-through text-sm">₹2,400.00</span>
-              <span className="text-xl text-gray-800">₹1,500.00</span>
+              <span className="text-gray-400 line-through text-sm">{currentPricing.yearly.original}</span>
+              <span className="text-xl text-gray-800">{currentPricing.yearly.price}</span>
             </div>
             <input 
               type="radio" 
@@ -59,7 +113,7 @@ export default function PremiumPage() {
               </div>
               <span className="text-xl text-gray-800">Monthly</span>
             </div>
-            <span className="text-xl text-gray-800">₹200.00</span>
+            <span className="text-xl text-gray-800">{currentPricing.monthly.price}</span>
             <input 
               type="radio" 
               name="plan" 
@@ -71,14 +125,17 @@ export default function PremiumPage() {
           </label>
         </div>
 
-        <button className="w-full bg-teal-600 text-white font-medium py-3 rounded-sm shadow-sm hover:bg-teal-700 transition-colors">
+        <button 
+          onClick={handleSubscribe}
+          className="w-full bg-teal-600 text-white font-medium py-3 rounded-sm shadow-sm hover:bg-teal-700 transition-colors"
+        >
           SUBSCRIBE
         </button>
 
         <div className="flex flex-col gap-2 text-center sm:text-left">
           <p className="text-blue-600 text-sm">Get started with a 10-day free trial.</p>
           <p className="text-gray-500 text-sm">
-            {plan === 'yearly' ? '₹1,500.00 will be charged every year.' : '₹200.00 will be charged every month.'} You can cancel your subscription anytime.
+            {plan === 'yearly' ? `${currentPricing.yearly.price} will be charged every year.` : `${currentPricing.monthly.price} will be charged every month.`} You can cancel your subscription anytime.
           </p>
           <div className="flex items-center justify-center sm:justify-start gap-2 text-sm text-gray-500 underline">
             <a href="#">Privacy Policy</a>
