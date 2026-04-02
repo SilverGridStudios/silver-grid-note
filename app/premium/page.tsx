@@ -229,29 +229,6 @@ export default function PremiumPage() {
             </div>
           </div>
 
-          {/* Grammar & spelling */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3 text-gray-800">
-              <CheckCircle2 className="w-5 h-5 text-gray-600" />
-              <span className="text-lg">Grammar & spelling</span>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm text-gray-600">
-              Quickly check and correct your grammar and spelling.
-            </div>
-          </div>
-
-          {/* Writing assistant */}
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-3 text-gray-800">
-              <Sparkles className="w-5 h-5 text-gray-600" />
-              <span className="text-lg">Writing assistant</span>
-            </div>
-            <div className="bg-white border border-gray-200 rounded-md p-4 shadow-sm text-gray-600 flex flex-col gap-4">
-              <p>Enhance your writing with an AI writing assistant by polishing, rewriting, and adjusting your style.</p>
-              <p>Users' notes will not be used to train AI models.</p>
-            </div>
-          </div>
-
         </div>
       </div>
     </div>
