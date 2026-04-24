@@ -40,7 +40,7 @@ export function BottomNav() {
   ];
 
   // Don't show bottom nav on edit pages
-  if (pathname.startsWith('/edit') || pathname.startsWith('/add')) {
+  if (!pathname || pathname.startsWith('/edit') || pathname.startsWith('/add')) {
     return null;
   }
 
